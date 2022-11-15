@@ -28,6 +28,12 @@ $content-width:    800px;
 $on-palm:          600px;
 $on-laptop:        800px;
 
+// tutorial styling
+.tutorial-challenge {
+  background-color: $background-color;
+  height: 100px;
+  position: relative;
+}
 
 // ion schema sandbox styling
 #schema {

@@ -111,6 +111,17 @@ function getInt32Memory0() {
     return cachedInt32Memory0;
 }
 /**
+* @param {string} schema
+* @returns {LoadSchemaResult}
+*/
+export function load_schema(schema) {
+    const ptr0 = passStringToWasm0(schema, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.load_schema(ptr0, len0);
+    return LoadSchemaResult.__wrap(ret);
+}
+
+/**
 * @param {string} ion
 * @param {string} schema
 * @param {string} schema_type
@@ -127,6 +138,75 @@ export function validate(ion, schema, schema_type) {
     return SchemaValidationResult.__wrap(ret);
 }
 
+/**
+*/
+export class LoadSchemaResult {
+
+    static __wrap(ptr) {
+        const obj = Object.create(LoadSchemaResult.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_loadschemaresult_free(ptr);
+    }
+    /**
+    * @param {boolean} has_error
+    * @param {string} error
+    */
+    constructor(has_error, error) {
+        const ptr0 = passStringToWasm0(error, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.loadschemaresult_new(has_error, ptr0, len0);
+        return LoadSchemaResult.__wrap(ret);
+    }
+    /**
+    * @returns {string}
+    */
+    error() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.loadschemaresult_error(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} val
+    */
+    set_error(val) {
+        const ptr0 = passStringToWasm0(val, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.loadschemaresult_set_error(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {boolean}
+    */
+    has_error() {
+        const ret = wasm.loadschemaresult_has_error(this.ptr);
+        return ret !== 0;
+    }
+    /**
+    * @param {boolean} val
+    */
+    set_has_error(val) {
+        wasm.loadschemaresult_set_has_error(this.ptr, val);
+    }
+}
 /**
 */
 export class SchemaValidationResult {

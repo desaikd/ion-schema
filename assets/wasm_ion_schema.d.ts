@@ -1,12 +1,43 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
+* @param {string} schema
+* @returns {LoadSchemaResult}
+*/
+export function load_schema(schema: string): LoadSchemaResult;
+/**
 * @param {string} ion
 * @param {string} schema
 * @param {string} schema_type
 * @returns {SchemaValidationResult}
 */
 export function validate(ion: string, schema: string, schema_type: string): SchemaValidationResult;
+/**
+*/
+export class LoadSchemaResult {
+  free(): void;
+/**
+* @param {boolean} has_error
+* @param {string} error
+*/
+  constructor(has_error: boolean, error: string);
+/**
+* @returns {string}
+*/
+  error(): string;
+/**
+* @param {string} val
+*/
+  set_error(val: string): void;
+/**
+* @returns {boolean}
+*/
+  has_error(): boolean;
+/**
+* @param {boolean} val
+*/
+  set_has_error(val: boolean): void;
+}
 /**
 */
 export class SchemaValidationResult {
@@ -65,6 +96,12 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly __wbg_loadschemaresult_free: (a: number) => void;
+  readonly loadschemaresult_new: (a: number, b: number, c: number) => number;
+  readonly loadschemaresult_error: (a: number, b: number) => void;
+  readonly loadschemaresult_set_error: (a: number, b: number, c: number) => void;
+  readonly loadschemaresult_has_error: (a: number) => number;
+  readonly loadschemaresult_set_has_error: (a: number, b: number) => void;
   readonly __wbg_schemavalidationresult_free: (a: number) => void;
   readonly schemavalidationresult_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
   readonly schemavalidationresult_result: (a: number) => number;
@@ -77,6 +114,7 @@ export interface InitOutput {
   readonly schemavalidationresult_set_error: (a: number, b: number, c: number) => void;
   readonly schemavalidationresult_has_error: (a: number) => number;
   readonly schemavalidationresult_set_has_error: (a: number, b: number) => void;
+  readonly load_schema: (a: number, b: number) => number;
   readonly validate: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;

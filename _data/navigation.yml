@@ -1,6 +1,8 @@
 main:
   - title: "Home"
     url: /
+  - title: "Tutorial"
+    url: /tutorial
   - title: "Sandbox"
     url: /sandbox
   - title: "News"
