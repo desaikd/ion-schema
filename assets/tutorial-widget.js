@@ -11,7 +11,8 @@ const type_def_1 = "type:: {\n" +
     "  fields: {\n" +
     "    name: { type: symbol, valid_values: [Toppings, toppings] },\n" +
     "    type: { type: symbol, valid_values: [list] }\n" +
-    "  }\n" +
+    "  },\n" +
+    "  content:closed \n" +
     "}";
 
 const type_def_2 = "type:: {\n" +
@@ -20,10 +21,28 @@ const type_def_2 = "type:: {\n" +
     "  type: struct,\n" +
     "  fields: {\n" +
     "    name: { type: symbol, valid_values: [shape, Shape] },\n" +
-    "    any_of: { type: list, valid_values: [[square, round, rectangle]] }\n" +
-    "  }\n" +
+    "    one_of: { type: list, element: { type: symbol, valid_values: [square, rectangle, round] }, container_length: 3 },\n" +
+    "  },\n" +
+    "  content:closed \n" +
     "}";
 
+const type_def_3 = "type:: {\n" +
+    "  name: type_def_3,\n" +
+    "  annotations: [required::type],\n" +
+    "  type: struct,\n" +
+    "  fields: {\n" +
+    "    name: { type: symbol, valid_values: [cake, Cake] },\n" +
+    "    fields: { \n" +
+    "       type: struct, \n"+
+    "       fields: { \n"+
+    "                 batter: { type: struct, fields: { type: {type: symbol, valid_values: [string] }, valid_values:  {type: list, valid_values: [[\"vanilla\", \"chocolate\", \"strawberry\"]]}, occurs: {type: symbol, valid_values: [required]}}, content: closed },\n"+
+    "                 toppings: { type: struct, fields: { type: { type: symbol, valid_values: [list] } }, content: closed },\n"+
+    "                 shape: {type: struct, fields: { type: {type: symbol, valid_values: [symbol]}, one_of: { type: list, element: { type: symbol, valid_values: [square, rectangle, round] }, container_length: 3 }, occurs: {type: symbol, valid_values: [required]}}, content: closed}\n"+
+    "               },\n" +
+    "       content: closed },\n" +
+    "  },\n" +
+    "  content:closed \n" +
+    "}";
 
 function _set_output_style(resultDiv, styleName) {
     var toRemove = [];
@@ -87,6 +106,14 @@ function loadPage() {
         tabSize: 2,
         value: schemaInputValue,
     });
+
+    ace.edit("code-challenge-editor-3").setOptions({
+        mode: 'ace/mode/ion',
+        theme: 'ace/theme/github',
+        showPrintMargin: false,
+        tabSize: 2,
+        value: schemaInputValue,
+    });
 }
 
 loadPage();
@@ -97,4 +124,8 @@ document.getElementById("code-challenge-btn-1").addEventListener("click", functi
 
 document.getElementById("code-challenge-btn-2").addEventListener("click", function() {
     show("code-challenge-2", "result-2", "code-challenge-editor-2", type_def_2, "type_def_2", "type::{name: square} type::{name: round} type::{name: rectangle}")
+});
+
+document.getElementById("code-challenge-btn-3").addEventListener("click", function() {
+    show("code-challenge-3", "result-3", "code-challenge-editor-3", type_def_3, "type_def_3", "type::{name: square} type::{name: round} type::{name: rectangle}")
 });

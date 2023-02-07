@@ -15,12 +15,12 @@ type definition and then has a separate sections for each ISL constraints. Each 
 on how to define a constraint or type, examples and code challenges to test your learnings with our schema sandbox.
 
 _Note: This tutorial simply provides examples to learn Ion Schema Language. For more details on any of the sections 
-mentioned in this tutorial please visit our official Ion Schema Specification 1.0._
+mentioned in this tutorial please visit our official [Ion Schema Specification 1.0][1]._
 
 <!-- DO NOT MODIFY BETWEEN THESE LINES! -->
 * Placeholder for Table of Content (Must not be removed)
 {:toc}
-## Ion Schema
+# Ion Schema
 
 Ion Schema consists of a version marker, schema header(optional), schema footer(optional) and types. 
 While a header and footer are both optional, a footer is required if a header is present (and vice-versa).
@@ -47,7 +47,7 @@ schema_footer::{}
 As defined above schema header can have an optional import field which can be used to leverage importing types from other schemas.
 Above example contains a `string` type with name `vehicle_name`. We will learn about defining types in the next section.
 
-## Type
+# Type
 
 An Ion schema type consists of a collection of zero or more constraints. A type definition is annotated with `type::` and 
 always contains a `name` field to provide a name to the type that you have defined.
@@ -151,10 +151,10 @@ type:: {
 
 ## Fields
 
-`fields` constraint cna be used on a `struct` type to restrict struct field names and values. 
+`fields` constraint can be used on a `struct` type to restrict struct field names and values. 
 A field may narrow its declared type by specifying additional constraints. By default, a field is constrained by occurs: optional.
 
-Following an example of fields constraint with fields `first_name`, `last_name` and `age`.
+Following is an example of fields constraint with fields `first_name`, `last_name` and `age`.
 ```ion
 type:: {
 name: fields_type,
@@ -165,13 +165,32 @@ name: fields_type,
     }
 }
 ```
-From the above example, you cna also specify the number of occurrences for a field using `occurs`. `occurs` can be defined either
-as `required`, `optional` or a `range::[1, n]`.
+As shown in the above example, you can also specify the number of occurrences for a field using `occurs`. `occurs` can be defined either
+as `required`, `optional` or `range::[1, n]`.
+
+## Valid Values
+
+`valid_values` constraint is a list of acceptable, non-annotated values; any values not present in the list are invalid. 
+Whether a particular value matches a specified valid_value is governed by the equivalence rules defined by the Ion data model.
+
+An example for `valid_values` constraint is as below:
+```ion
+type::{        
+  name: State,
+  valid_values: [
+    AK, AL, AR, AZ, CA, CO, CT, DE, FL, GA, HI, IA, ID, IL, IN, KS, KY,
+    LA, MA, MD, ME, MI, MN, MO, MS, MT, NC, ND, NE, NH, NJ, NM, NV, NY,
+    OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VA, VT, WA, WI, WV, WY
+  ],
+}
+```
 
 <div id="code-challenge-3" class="bs-callout bs-callout-default"> 
 <h3> Try it yourself! </h3>
 
-TBD
+Define a type definition called cake which has 3 fields batter, shape and toppings. (Use previous code challenges to define toppings and shape types).
+The batter field is of string type that could be either of the 3 valid values "vanilla", "chocolate", "strawberry". All fields of cake type definition are required except toppings.
+
 <div id="code-challenge-editor-3" class="bs-callout bs-callout-primary tutorial-challenge"></div>
 <button id="code-challenge-btn-3" type="submit">Run</button>
 <br>
@@ -182,14 +201,22 @@ TBD
 Answer
 </summary>
 <pre>
-TBD
+type:: {
+    name: cake,
+    fields: {
+        batter: { type: string, valid_values: ["vanilla", "chocolate", "strawberry"], occurs: required },
+        toppings: { type: list },
+        shape: { type: symbol, one_of: [square, round, rectangle], occurs: required },
+    }
+}
 </pre>
 </details>
 </div>
 <div id="snackbar"></div>
 
-## Valid Values
-
+## Other constraints
+Apart from this [Ion schema specification][2] also other constraints for specific Ion types. 
+E.g. String/Symbol constraints, Decimal constraints, Timestamp constraints etc. These constraints can be used to further restrict a particular Ion type according to use case.
 
 <!-- References -->
 [1]: docs/isl-1-0/spec.md
