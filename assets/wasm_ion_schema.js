@@ -193,6 +193,98 @@ export function validate(ion, schema, schema_type, is_document) {
 }
 
 /**
+* @param {string} schema
+* @returns {GraphResult}
+*/
+export function convert_isl_to_dot(schema) {
+    const ptr0 = passStringToWasm0(schema, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
+    const ret = wasm.convert_isl_to_dot(ptr0, len0);
+    return GraphResult.__wrap(ret);
+}
+
+/**
+*/
+export class GraphResult {
+
+    static __wrap(ptr) {
+        const obj = Object.create(GraphResult.prototype);
+        obj.ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.ptr;
+        this.ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_graphresult_free(ptr);
+    }
+    /**
+    * @param {string} dot_graph
+    * @param {string} error
+    */
+    constructor(dot_graph, error) {
+        const ptr0 = passStringToWasm0(dot_graph, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(error, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.graphresult_new(ptr0, len0, ptr1, len1);
+        return GraphResult.__wrap(ret);
+    }
+    /**
+    * @returns {string}
+    */
+    dot_graph() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.graphresult_dot_graph(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} dot_graph
+    */
+    set_dot_graph(dot_graph) {
+        const ptr0 = passStringToWasm0(dot_graph, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.graphresult_set_dot_graph(this.ptr, ptr0, len0);
+    }
+    /**
+    * @returns {string}
+    */
+    error() {
+        try {
+            const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+            wasm.graphresult_error(retptr, this.ptr);
+            var r0 = getInt32Memory0()[retptr / 4 + 0];
+            var r1 = getInt32Memory0()[retptr / 4 + 1];
+            return getStringFromWasm0(r0, r1);
+        } finally {
+            wasm.__wbindgen_add_to_stack_pointer(16);
+            wasm.__wbindgen_free(r0, r1);
+        }
+    }
+    /**
+    * @param {string} error
+    */
+    set_error(error) {
+        const ptr0 = passStringToWasm0(error, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.graphresult_set_error(this.ptr, ptr0, len0);
+    }
+}
+/**
 */
 export class SchemaValidationResult {
 

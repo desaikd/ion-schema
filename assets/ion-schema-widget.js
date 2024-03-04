@@ -1,7 +1,36 @@
 import init, {validate} from "./wasm_ion_schema.js";
+import {convert_isl_to_dot} from "./wasm_ion_schema.js";
 const validateButton = document.getElementById("validate");
+const visualizeButton = document.getElementById("graph");
 const shareButton = document.getElementById("share");
 const dropDownSelection = document.getElementById("examples");
+const downloadSVGButton = document.getElementById("download-svg");
+const downloadDOTFileButton = document.getElementById("download-dot-file");
+const graphLegend = "digraph Legend {\n" +
+    "    rankdir=LR\n" +
+    "    subgraph cluster_01 {\n" +
+    "        label = \"Legend\";\n" +
+    "        {\n" +
+    "            d0 [style = invis];\n" +
+    "            d1 [style = invis];\n" +
+    "            p0 [style = invis];\n" +
+    "            p1 [style = invis];\n" +
+    "            a0 [style = invis];\n" +
+    "            a1 [style = invis];\n" +
+    "            b0 [style = invis];\n" +
+    "            b1 [style = invis];\n" +
+    "            n1 [label=\"User defined schema type\" color=green];\n" +
+    "            n2 [label=\"Ion schema builtin type\"];\n" +
+    "        }\n" +
+    "        d0 -> d1 [label=\"Relation to a field type\" style=dotted, dir=none]\n" +
+    "        p0 -> p1 [label=\"Relation to a base type\", dir=none]\n" +
+    "        a0 -> a1 [label=\"One of constraint of a base type\" arrowhead=empty]\n" +
+    "        b0 -> b1 [label=\"Any of or all of constraint of a base type\" arrowhead=odiamond]\n" +
+    "    }\n" +
+    "}";
+const t = d3.transition()
+    .duration(750)
+    .ease(d3.easeLinear);
 
 function initPage() {
     let sampleIds = Object.keys(SAMPLES);
@@ -55,8 +84,15 @@ function populateInputFields(sample) {
     const pre = document.getElementById('result');
     const resultDiv = document.getElementById('resultdiv');
     const violation = document.getElementById('violation');
+    const graphView = document.getElementById('graph-view');
+    const legend = document.getElementById('graph-legend');
     pre.textContent = "";
     violation.textContent = "";
+    graphView.innerHTML = "";
+    legend.innerHTML = "";
+    document.getElementById("download-svg").style.display = "none";
+    document.getElementById("download-dot-file").style.display = "none";
+    document.getElementById("graph-error-div").style.display = "none";
     _set_output_style(resultDiv, "primary")
 }
 
@@ -115,6 +151,7 @@ const show = () => {
         .then(() => {
             const is_document = document.getElementById("document").checked;
             const result = validate(valueContent, schemaContent, document.getElementById('schema_type').value, is_document);
+
             const pre = document.getElementById('result');
             const resultDiv = document.getElementById('resultdiv');
             const container = document.getElementById('violation');
@@ -140,6 +177,46 @@ const show = () => {
 };
 
 validateButton.addEventListener("click", show);
+const showGraph = () => {
+    const schemaContent = ace.edit("schema").getValue();
+
+    init()
+        .then(() => {
+            const graphView = document.getElementById('graph-view');
+            const legend = document.getElementById('graph-legend');
+            graphView.innerHTML = "";
+            legend.innerHTML = "";
+
+            const dotGraph = convert_isl_to_dot(schemaContent);
+            console.log(dotGraph.error());
+
+            if(dotGraph.error().length !== 0) {
+                document.getElementById("graph-error-div").style.display = "inline-block";
+
+                document.getElementById("download-svg").style.display = "none";
+                document.getElementById("download-dot-file").style.display = "none";
+                document.getElementById("graph-view-error").textContent = dotGraph.error();
+            } else {
+                d3.select("#graph-view").graphviz().transition(function() {
+                    return d3.transition()
+                        .delay(100)
+                        .duration(1000);
+                })
+                    .renderDot(dotGraph.dot_graph());
+                d3.select("#graph-legend").graphviz()
+                    .width(700)
+                    .height(350)
+                    .fit(true)
+                    .renderDot(graphLegend);
+                document.getElementById("graph-error-div").style.display = "none";
+
+                document.getElementById("download-svg").style.display = "inline-block";
+                document.getElementById("download-dot-file").style.display = "inline-block";
+            }
+        });
+};
+
+visualizeButton.addEventListener("click", showGraph);
 
 const copyUrl = () => {
     let url = window.location.href.split('?')[0]
@@ -155,6 +232,57 @@ const copyUrl = () => {
     return navigator.clipboard.writeText(url);
 };
 shareButton.addEventListener("click", copyUrl);
+
+const downloadSVG = () => {
+    // get svg element
+    const svg = document.getElementById("graph-view");
+
+    // get svg source
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svg);
+    source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+
+    // convert svg source to URI data scheme
+    let url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+    let link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', "schema.svg");
+    link.click();
+
+    // set the snackbar with download completion message
+    let x = document.getElementById("snackbar");
+    x.innerText = "Downloaded SVG"
+    x.classList.add("show");
+    // CSS fadeout is set with a delay of 2.5 seconds and an animation time of 0.5 seconds. Timeout here
+    // is slightly shorter than 3s to avoid a race condition and have the box flash before vanishing again.
+    setTimeout(function(){ x.classList.remove("show"); }, 2995);
+}
+
+downloadSVGButton.addEventListener("click", downloadSVG);
+
+const downloadDOTFile = () => {
+    // get the dot graph and encode URI for download
+    const schemaContent = ace.edit("schema").getValue();
+    const dotGraph = convert_isl_to_dot(schemaContent);
+
+    // convert dot source to URI data scheme
+    let dot = 'data:text/json;charset=utf-8,' + dotGraph;
+    let data = encodeURI(dot);
+    let link = document.createElement('a');
+    link.setAttribute('href', data);
+    link.setAttribute('download', "schema.dot");
+    link.click();
+
+    // set the snackbar with download completion message
+    let x = document.getElementById("snackbar");
+    x.innerText = "Downloaded DOT File"
+    x.classList.add("show");
+    // CSS fadeout is set with a delay of 2.5 seconds and an animation time of 0.5 seconds. Timeout here
+    // is slightly shorter than 3s to avoid a race condition and have the box flash before vanishing again.
+    setTimeout(function(){ x.classList.remove("show"); }, 2995);
+}
+
+downloadDOTFileButton.addEventListener("click", downloadDOTFile);
 
 dropDownSelection.onchange = function() {
     let sample = SAMPLES[dropDownSelection.value];

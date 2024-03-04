@@ -9,6 +9,37 @@
 */
 export function validate(ion: string, schema: string, schema_type: string, is_document: boolean): SchemaValidationResult;
 /**
+* @param {string} schema
+* @returns {GraphResult}
+*/
+export function convert_isl_to_dot(schema: string): GraphResult;
+/**
+*/
+export class GraphResult {
+  free(): void;
+/**
+* @param {string} dot_graph
+* @param {string} error
+*/
+  constructor(dot_graph: string, error: string);
+/**
+* @returns {string}
+*/
+  dot_graph(): string;
+/**
+* @param {string} dot_graph
+*/
+  set_dot_graph(dot_graph: string): void;
+/**
+* @returns {string}
+*/
+  error(): string;
+/**
+* @param {string} error
+*/
+  set_error(error: string): void;
+}
+/**
 */
 export class SchemaValidationResult {
   free(): void;
@@ -62,6 +93,12 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly __wbg_graphresult_free: (a: number) => void;
+  readonly graphresult_new: (a: number, b: number, c: number, d: number) => number;
+  readonly graphresult_dot_graph: (a: number, b: number) => void;
+  readonly graphresult_set_dot_graph: (a: number, b: number, c: number) => void;
+  readonly graphresult_error: (a: number, b: number) => void;
+  readonly graphresult_set_error: (a: number, b: number, c: number) => void;
   readonly __wbg_schemavalidationresult_free: (a: number) => void;
   readonly schemavalidationresult_new: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
   readonly schemavalidationresult_result: (a: number) => number;
@@ -74,6 +111,7 @@ export interface InitOutput {
   readonly schemavalidationresult_set_has_error: (a: number, b: number) => void;
   readonly schemavalidationresult_violations: (a: number) => number;
   readonly validate: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
+  readonly convert_isl_to_dot: (a: number, b: number) => number;
   readonly __wbindgen_malloc: (a: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

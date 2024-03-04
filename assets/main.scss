@@ -23,7 +23,8 @@ $grey-color-light: lighten($grey-color, 40%);
 $grey-color-dark:  darken($grey-color, 25%);
 
 // Width of the content area
-$content-width:    800px;
+//TODO: change this for all pages
+$content-width:    2300px;
 
 $on-palm:          600px;
 $on-laptop:        800px;
@@ -55,7 +56,9 @@ button {
   text-align: center;
   touch-action: manipulation;
   vertical-align: middle;
-  width: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: auto;
 }
 button:hover {
   background-color: #f7fafa;
@@ -69,10 +72,14 @@ button:focus {
   background-color: $background-color;
   text-align: left;
 }
-#result {
+#result, #graph-view-error {
   border-left: 0px;
   background-color: $background-color;
 }
+#download-svg, #download-dot-file, #graph-error-div {
+  display: none;
+}
+
 select {
   position: absolute;
   min-width: 160px;
@@ -90,7 +97,23 @@ option {
   padding: 12px 16px;
   text-decoration: none;
 }
+#wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
 
+#section1 {
+  grid-column: 1;
+  grid-row: auto;
+  padding-right: 50px;
+}
+#section2 {
+  grid-column: 2;
+  grid-row: auto;
+  padding-left: 50px;
+  border-left: 0px;
+  background-color: $background-color;
+}
 // whiteglass also includes a mixin for defining media queries.
 // Use media queries like this:
 // @include media-query($on-palm) {
